@@ -4,6 +4,7 @@ from copy import deepcopy
 from collections import defaultdict
 from time import perf_counter as stopwatch
 from queue import PriorityQueue
+import math
 
 #hash function converts the 3d list to a string for use in defaultdict
 def hash(arr):
@@ -110,152 +111,143 @@ def h3(neighbour):
                     last_x = i
                     last_y = j
         manhattan += abs(last_x - start_x) + abs(last_y - start_y)
-    return deepState
+    return manhattan
 
 def h4(neighbour):
     return 0.5*h2(neighbour) + 0.5*h3(neighbour)
 
 def aStar_with_h1(initial, final):
-    print("Using aStar w/ h3 to solve for- ")
-    printBoard(initial)
-    _aStar = 0
-    _level = 0
+    print("Using aStar w/ h1 to solve for- ")
+    print(initial)
+    distance = defaultdict(lambda: math.inf)
+    parent = defaultdict(lambda: None)
+    distance[hash(initial)] = 0
     queue = PriorityQueue()
-    statesTaken = defaultdict(lambda: False) #a map for checking which states were reached, returns false by default 
-    queue.put((0, initial))
-    m = initial
+    queue.put((distance[hash(initial)], initial))
+    _aStar = 0
     while not queue.empty():
-        m = queue.get()[1]
-        if statesTaken[hash(m)]:
-            continue
+        dist, m = queue.get()
         _aStar += 1
-        statesTaken[hash(m)] = True
-        print(f"aStar with h3 has checked: {_aStar} states", end='\r')
-        if m == final:
-            print(f"\nFinal State Reached in {_aStar} steps.")
-            printBoard(m)
-            break
         for neighbour in getPossibleStates(m):
-            if not statesTaken[hash(neighbour)]:
-                queue.put((h1(neighbour)+_level, neighbour))
-    return _aStar, m, _level
+            tempDistance = dist + 1 + h1(neighbour)
+            if(tempDistance < distance[hash(neighbour)]):
+                distance[hash(neighbour)] = tempDistance
+                parent[hash(neighbour)] = m
+                queue.put((distance[hash(neighbour)], neighbour))
+        if(m == final):
+            break
+    print(f"aStar has checked: {_aStar} states")
+    if(distance[hash(final)] != math.inf):
+        print(f'Final state reached.\nOptimal path is {distance[hash(final)]}.')
+        print(final)
+        print('The path will be- ')
+        current = final
+        while(parent[hash(current)] != None):
+            print(current)
+            current = parent[hash(current)]
+        print(initial)
+    else:
+        print(f'Final state not reachable.')
 
 def aStar_with_h2(initial, final):
     print("Using aStar w/ h2 to solve for- ")
-    printBoard(initial)
-    _aStar = 0
-    _level = 0
+    print(initial)
+    distance = defaultdict(lambda: math.inf)
+    parent = defaultdict(lambda: None)
+    distance[hash(initial)] = 0
     queue = PriorityQueue()
-    statesTaken = defaultdict(lambda: False) #a map for checking which states were reached, returns false by default 
-    queue.put((0, initial))
-    m = initial
+    queue.put((distance[hash(initial)], initial))
+    _aStar = 0
     while not queue.empty():
-        m = queue.get()[1]
-        if statesTaken[hash(m)]:
-            continue
+        dist, m = queue.get()
         _aStar += 1
-        statesTaken[hash(m)] = True
-        print(f"aStar with h2 has checked: {_aStar} states", end='\r')
-        if m == final:
-            print(f"\nFinal State Reached in {_aStar} steps.")
-            printBoard(m)
-            break
-        _level += 1
         for neighbour in getPossibleStates(m):
-            if not statesTaken[hash(neighbour)]:
-                queue.put((h2(neighbour)+_level, neighbour))
-    return _aStar, m, _level
+            tempDistance = dist + 1 + h2(neighbour)
+            if(tempDistance < distance[hash(neighbour)]):
+                distance[hash(neighbour)] = tempDistance
+                parent[hash(neighbour)] = m
+                queue.put((distance[hash(neighbour)], neighbour))
+        if(m == final):
+            break
+    print(f"aStar has checked: {_aStar} states")
+    if(distance[hash(final)] != math.inf):
+        print(f'Final state reached.\nOptimal path is {distance[hash(final)]}.')
+        print(final)
+        print('The path will be- ')
+        current = final
+        while(parent[hash(current)] != None):
+            print(current)
+            current = parent[hash(current)]
+        print(initial)
+    else:
+        print(f'Final state not reachable.')
 
 def aStar_with_h3(initial, final):
-    print("Using aStar w/ h1 to solve for- ")
-    printBoard(initial)
-    _aStar = 0
-    _level = 0
+    print("Using aStar w/ h3 to solve for- ")
+    print(initial)
+    distance = defaultdict(lambda: math.inf)
+    parent = defaultdict(lambda: None)
+    distance[hash(initial)] = 0
     queue = PriorityQueue()
-    statesTaken = defaultdict(lambda: False) #a map for checking which states were reached, returns false by default 
-    queue.put((0, initial))
-    m = initial
+    queue.put((distance[hash(initial)], initial))
+    _aStar = 0
     while not queue.empty():
-        m = queue.get()[1]
-        if statesTaken[hash(m)]:
-            continue
+        dist, m = queue.get()
         _aStar += 1
-        statesTaken[hash(m)] = True
-        print(f"aStar w/ h1 has checked: {_aStar} states", end='\r')
-        if m == final:
-            print(f"\nFinal State Reached in {_aStar} steps.")
-            printBoard(m)
-            break
-        _level += 1
         for neighbour in getPossibleStates(m):
-            if not statesTaken[hash(neighbour)]:
-                queue.put((h3(neighbour)+_level, neighbour))
-    return _aStar, m, _level
+            tempDistance = dist + 1 + h3(neighbour)
+            if(tempDistance < distance[hash(neighbour)]):
+                distance[hash(neighbour)] = tempDistance
+                parent[hash(neighbour)] = m
+                queue.put((distance[hash(neighbour)], neighbour))
+        if(m == final):
+            break
+    print(f"aStar has checked: {_aStar} states")
+    if(distance[hash(final)] != math.inf):
+        print(f'Final state reached.\nOptimal path is {distance[hash(final)]}.')
+        print(final)
+        print('The path will be- ')
+        current = final
+        while(parent[hash(current)] != None):
+            print(current)
+            current = parent[hash(current)]
+        print(initial)
+    else:
+        print(f'Final state not reachable.')
 
 def aStar_with_h4(initial, final):
     print("Using aStar w/ h4 to solve for- ")
-    printBoard(initial)
-    _aStar = 0
-    _level = 0
+    print(initial)
+    distance = defaultdict(lambda: math.inf)
+    parent = defaultdict(lambda: None)
+    distance[hash(initial)] = 0
     queue = PriorityQueue()
-    statesTaken = defaultdict(lambda: False) #a map for checking which states were reached, returns false by default 
-    queue.put((0, initial))
-    m = initial
+    queue.put((distance[hash(initial)], initial))
+    _aStar = 0
     while not queue.empty():
-        m = queue.get()[1]
-        if statesTaken[hash(m)]:
-            continue
+        dist, m = queue.get()
         _aStar += 1
-        statesTaken[hash(m)] = True
-        print(f"aStar w/ h4 has checked: {_aStar} states", end='\r')
-        if m == final:
-            print(f"\nFinal State Reached in {_aStar} steps.")
-            printBoard(m)
-            break
-        _level += 1
         for neighbour in getPossibleStates(m):
-            if not statesTaken[hash(neighbour)]:
-                queue.put((h4(neighbour)+_level, neighbour))
-    return _aStar, m, _level
-
-#auxillary functions calls the main functions and also prints useful info.
-def aux_h1(initial, final):
-    statesChecked, finalBoard, optimalCost = aStar_with_h1(initial, final)
-    if finalBoard == final:
-        print(f"aStar w/ h3 checked {statesChecked} states to reach the final state. i.e.")
-        printBoard(finalBoard)
-        #print(f"Optimal path Cost is {optimalCost}")
+            tempDistance = dist + 1 + h4(neighbour)
+            if(tempDistance < distance[hash(neighbour)]):
+                distance[hash(neighbour)] = tempDistance
+                parent[hash(neighbour)] = m
+                queue.put((distance[hash(neighbour)], neighbour))
+        if(m == final):
+            break
+    print(f"aStar has checked: {_aStar} states")
+    if(distance[hash(final)] != math.inf):
+        print(f'Final state reached.\nOptimal path is {distance[hash(final)]}.')
+        print(final)
+        print('The path will be- ')
+        current = final
+        while(parent[hash(current)] != None):
+            print(current)
+            current = parent[hash(current)]
+        print(initial)
     else:
-        print(f"Not possible to reach the final state by aStar. {statesChecked} states checked.")
-    return optimalCost
+        print(f'Final state not reachable.')
 
-def aux_h2(initial, final):
-    statesChecked, finalBoard, optimalCost = aStar_with_h2(initial, final)
-    if finalBoard == final:
-        print(f"aStar w/ h2 checked {statesChecked} states to reach the final state. i.e.")
-        printBoard(finalBoard)
-        #print(f"Optimal path Cost is {optimalCost}")
-    else:
-        print(f"Not possible to reach the final state by aStar. {statesChecked} states checked.")
-    return 
-
-def aux_h3(initial, final):
-    statesChecked, finalBoard, optimalCost = aStar_with_h3(initial, final)
-    if finalBoard == final:
-        print(f"aStar w/ h1 checked {statesChecked} states to reach the final state. i.e.")
-        printBoard(finalBoard)
-        #print(f"Optimal path Cost is {optimalCost}")
-    else:
-        print(f"Not possible to reach the final state by aStar. {statesChecked} states checked.")
-
-def aux_h4(initial, final):
-    statesChecked, finalBoard, optimalCost = aStar_with_h4(initial, final)
-    if finalBoard == final:
-        print(f"aStar w/ h4 checked {statesChecked} states to reach the final state. i.e.")
-        printBoard(finalBoard)
-        #print(f"Optimal path Cost is {optimalCost}")
-    else:
-        print(f"Not possible to reach the final state by aStar. {statesChecked} states checked.")
 
 if __name__ == '__main__':
     final_state = [1, 2, 3, 4, 5, 6, 7, 8, 0]   #desired final state as a 2d array
@@ -291,21 +283,21 @@ if __name__ == '__main__':
     impossibleState = [[1,2,3], [4,5,6], [8,7,0]]
     source = [[1,2,3],[0,4,6],[7,5,8]]
     t1 = stopwatch()
-    aux_h3(deepState, final)
+    aStar_with_h1(initial, final)
     t2 = stopwatch()
-    print(f"AStar with h1 took {round(t2-t1, 3)}s")
+    print(f"AStar with h1 took {round(t2-t1, 3)}s\n\n")
     
     t1 = stopwatch()
-    aux_h2(deepState, final)
+    aStar_with_h2(initial, final)
     t2 = stopwatch()
-    print(f"AStar with h2 took {round(t2-t1, 3)}s")
+    print(f"AStar with h2 took {round(t2-t1, 3)}s\n\n")
 
     t1 = stopwatch()
-    aux_h1(deepState, final)
+    aStar_with_h3(initial, final)
     t2 = stopwatch()
-    print(f"AStar with h3 took {round(t2-t1, 3)}s")
+    print(f"AStar with h3 took {round(t2-t1, 3)}s\n\n")
 
     t1 = stopwatch()
-    aux_h4(deepState, final)
+    aStar_with_h4(initial, final)
     t2 = stopwatch()
-    print(f"AStar with h4 took {round(t2-t1, 3)}s")
+    print(f"AStar with h4 took {round(t2-t1, 3)}s\n\n")
